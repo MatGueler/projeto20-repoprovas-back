@@ -26,19 +26,19 @@ export async function CreateTest(test: ICreateTest) {
   await prisma.tests.create({ data: test });
 }
 
-// export async function getCardById(id: number) {
-//   const card = await prisma.cards.findFirst({
-//     where: { id },
-//     include: {
-//       user: {
-//         select: {
-//           name: true,
-//         },
-//       },
-//     },
-//   });
-//   return card;
-// }
+export async function getAllTestsByDisciplines() {
+  const tests = await prisma.tests.findMany({
+    include: {
+      teacherDiscipline: {},
+    },
+    orderBy: {
+      teacherDiscipline: {
+        disciplineId: "asc",
+      },
+    },
+  });
+  return tests;
+}
 
 // export async function getAllCards(userId: number) {
 //   const cards = await prisma.cards.findMany({

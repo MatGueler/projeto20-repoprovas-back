@@ -9,12 +9,10 @@ export async function CreateTest(req: Request, res: Response) {
   res.sendStatus(201);
 }
 
-// export async function getCardById(req: Request, res: Response) {
-//   const { id } = req.params;
-//   const userId = res.locals.userId;
-//   const card = await service.getCardById(Number(id), Number(userId));
-//   res.status(200).send(card);
-// }
+export async function getAllTestsByDisciplines(req: Request, res: Response) {
+  const test = await testService.getAllTestsByDisciplines();
+  res.status(200).send(test);
+}
 
 // export async function getAllCards(req: Request, res: Response) {
 //   const userId = res.locals.userId;
