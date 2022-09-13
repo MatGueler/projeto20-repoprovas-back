@@ -28,12 +28,10 @@ async function verifyCategoryExist(name: string) {
   return category;
 }
 
-// export async function getCardById(id: number, userId: number) {
-//   let cardById = await repository.getCardById(id);
-//   await verifyCardNoExist(cardById);
-//   await verifyUserCard(cardById, userId);
-//   return cardById;
-// }
+export async function getAllTestsByDisciplines() {
+  let tests = await testRepository.getAllTestsByDisciplines();
+  return tests;
+}
 
 // export async function getAllCards(userId: number) {
 //   const credentialById = await repository.getAllCards(userId);
