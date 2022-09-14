@@ -33,6 +33,11 @@ export async function getAllTestsByDisciplines() {
   return tests;
 }
 
+export async function getAllTestsByTeachers() {
+  let tests = await testRepository.getAllTestsByTeachers();
+  return tests;
+}
+
 // export async function getAllCards(userId: number) {
 //   const credentialById = await repository.getAllCards(userId);
 //   return credentialById;

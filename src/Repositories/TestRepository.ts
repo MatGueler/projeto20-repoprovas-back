@@ -52,6 +52,20 @@ export async function getAllTestsByDisciplines() {
   return tests;
 }
 
+export async function getAllTestsByTeachers() {
+  const tests = await prisma.teachers.findMany({
+    include: {
+      TeachersDisciplines: {
+        include: {
+          discipline: true,
+          Tests: {},
+        },
+      },
+    },
+  });
+  return tests;
+}
+
 // export async function getAllCards(userId: number) {
 //   const cards = await prisma.cards.findMany({
 //     where: { userId },
