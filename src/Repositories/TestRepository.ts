@@ -27,13 +27,25 @@ export async function CreateTest(test: ICreateTest) {
 }
 
 export async function getAllTestsByDisciplines() {
-  const tests = await prisma.tests.findMany({
+  const tests = await prisma.terms.findMany({
     include: {
-      teacherDiscipline: {},
-    },
-    orderBy: {
-      teacherDiscipline: {
-        disciplineId: "asc",
+      Disciplines: {
+        include: {
+          TeachersDisciplines: {
+            include: {
+              Tests: {
+                include: {
+                  category: true,
+                  teacherDiscipline: {
+                    select: {
+                      teacher: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
   });
