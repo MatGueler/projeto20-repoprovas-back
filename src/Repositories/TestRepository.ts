@@ -53,6 +53,7 @@ export async function getAllTestsByDisciplines() {
             include: {
               Tests: {
                 include: {
+                  category: true,
                   teacherDiscipline: {
                     select: {
                       teacher: true,
