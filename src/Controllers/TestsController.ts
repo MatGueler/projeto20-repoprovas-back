@@ -14,15 +14,7 @@ export async function getAllTestsByDisciplines(req: Request, res: Response) {
   res.status(200).send(test);
 }
 
-// export async function getAllCards(req: Request, res: Response) {
-//   const userId = res.locals.userId;
-//   const cards = await service.getAllCards(userId);
-//   res.status(200).send(cards);
-// }
-
-// export async function deleteCardById(req: Request, res: Response) {
-//   const { id } = req.params;
-//   const userId = res.locals.userId;
-//   await service.deleteCardById(Number(id), userId);
-//   res.sendStatus(200);
-// }
+export async function getAllTestsByTeachers(req: Request, res: Response) {
+  const test = await testService.getAllTestsByTeachers();
+  res.status(200).send(test);
+}
