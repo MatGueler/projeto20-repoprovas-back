@@ -30,17 +30,17 @@ export async function getAllTestsByDisciplines() {
   const tests = await prisma.terms.findMany({
     include: {
       Disciplines: {
+        orderBy: { termId: "asc" },
         include: {
           TeachersDisciplines: {
-            include: {
+            select: {
+              teacher: true,
               Tests: {
-                include: {
+                select: {
+                  id: true,
+                  name: true,
+                  pdfUrl: true,
                   category: true,
-                  teacherDiscipline: {
-                    select: {
-                      teacher: true,
-                    },
-                  },
                 },
               },
             },
@@ -56,9 +56,16 @@ export async function getAllTestsByTeachers() {
   const tests = await prisma.teachers.findMany({
     include: {
       TeachersDisciplines: {
-        include: {
+        select: {
           discipline: true,
-          Tests: {},
+          Tests: {
+            select: {
+              id: true,
+              name: true,
+              pdfUrl: true,
+              category: true,
+            },
+          },
         },
       },
     },
