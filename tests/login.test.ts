@@ -1,6 +1,8 @@
 import supertest from "supertest";
 import prisma from "../src/Database/prisma";
 import server from "../src/index";
+import loginFactory from "./factories/loginFactory/loginFactory";
+import registerFactory from "./factories/registerFactory/registerFactory";
 
 beforeAll(async () => {
   await prisma.$executeRaw`TRUNCATE TABLE users`;
@@ -8,11 +10,7 @@ beforeAll(async () => {
 
 describe("user test", () => {
   it("user register", async () => {
-    const body = {
-      email: "matt@gmail.com",
-      password: "123456",
-      confirmPassword: "123456",
-    };
+    const body = await registerFactory();
     const result = await supertest(server).post(`/signup`).send(body);
 
     expect(result.status).toBe(201);
@@ -41,12 +39,8 @@ describe("user test", () => {
 
 describe("user test", () => {
   it("user login", async () => {
-    const body = {
-      email: "matt@gmail.com",
-      password: "123456",
-    };
+    const body = await loginFactory();
     const result = await supertest(server).post(`/signin`).send(body);
-    console.log(result.status);
 
     expect(result.status).toBe(200);
   });
