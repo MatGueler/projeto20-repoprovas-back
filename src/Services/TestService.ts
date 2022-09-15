@@ -38,11 +38,6 @@ export async function getAllTestsByTeachers() {
   return tests;
 }
 
-// export async function getAllCards(userId: number) {
-//   const credentialById = await repository.getAllCards(userId);
-//   return credentialById;
-// }
-
 // export async function deleteCardById(id: number, userId: number) {
 //   const noteById = await repository.getCardById(id);
 //   await verifyCardNoExist(noteById);
