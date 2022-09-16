@@ -34,13 +34,26 @@ export async function getAllTestsByDisciplines() {
         include: {
           TeachersDisciplines: {
             select: {
-              teacher: true,
               Tests: {
+                distinct: ["categoryId"],
                 select: {
-                  id: true,
-                  name: true,
-                  pdfUrl: true,
-                  category: true,
+                  category: {
+                    select: {
+                      id: true,
+                      name: true,
+                      Tests: {
+                        select: {
+                          name: true,
+                          pdfUrl: true,
+                          teacherDiscipline: {
+                            select: {
+                              teacher: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -59,11 +72,20 @@ export async function getAllTestsByTeachers() {
         select: {
           discipline: true,
           Tests: {
+            distinct: ["categoryId"],
             select: {
-              id: true,
-              name: true,
-              pdfUrl: true,
-              category: true,
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                  Tests: {
+                    select: {
+                      name: true,
+                      pdfUrl: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
