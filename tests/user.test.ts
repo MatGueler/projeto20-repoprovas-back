@@ -2,7 +2,6 @@ import supertest from "supertest";
 import prisma from "../src/Database/prisma";
 import server from "../src/index";
 import {
-  errorLoginFactory,
   errorPasswordFactory,
   loginFactory,
 } from "./factories/loginFactory/loginFactory";
@@ -12,8 +11,13 @@ import registerFactory, {
   smallPassword,
 } from "./factories/registerFactory/registerFactory";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await prisma.$executeRaw`TRUNCATE TABLE users`;
+});
+
+afterAll(async () => {
+  await prisma.$executeRaw`TRUNCATE TABLE users`;
+  prisma.$disconnect;
 });
 
 describe("user test", () => {
@@ -26,6 +30,8 @@ describe("user test", () => {
 
   it(" Try user register with already existent user", async () => {
     const body = await registerFactory();
+    await supertest(server).post(`/signup`).send(body);
+    await supertest(server).post(`/signup`).send(body);
     const result = await supertest(server).post(`/signup`).send(body);
 
     expect(result.status).toBe(401);
@@ -55,15 +61,16 @@ describe("user test", () => {
 
 describe("user test", () => {
   it("Try user login", async () => {
-    console.log(`running on ${process.env.DATABASE_URL}`);
-    const body = await loginFactory();
-    const result = await supertest(server).post(`/signin`).send(body);
-
+    const body = await registerFactory();
+    await supertest(server).post(`/signup`).send(body);
+    const result = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
     expect(result.status).toBe(200);
   });
 
   it("Try login with non-existent user", async () => {
-    const body = await errorLoginFactory();
+    const body = await loginFactory();
     const result = await supertest(server).post(`/signin`).send(body);
     expect(result.status).toBe(401);
   });
@@ -87,8 +94,4 @@ describe("user test", () => {
 
     expect(result.status).toBe(422);
   });
-});
-
-afterAll(async () => {
-  await prisma.$disconnect;
 });
