@@ -1,28 +1,34 @@
 import supertest from "supertest";
 import prisma from "../src/Database/prisma";
 import server from "../src/index";
+import registerFactory from "./factories/registerFactory/registerFactory";
+import testFactory from "./factories/testFactory/testFactory";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await prisma.$executeRaw`TRUNCATE TABLE users`;
 });
 
-describe("create_test tests", () => {
-  //   it("user register", async () => {
-  //     const body = await registerFactory();
-  //     const result = await supertest(server).post(`/signup`).send(body);
-  //     expect(result.status).toBe(201);
-  //   });
-});
-
-describe("user test", () => {
-  //   it("Try user login", async () => {
-  //     console.log(`running on ${process.env.DATABASE_URL}`);
-  //     const body = await loginFactory();
-  //     const result = await supertest(server).post(`/signin`).send(body);
-  //     expect(result.status).toBe(200);
-  //   });
-});
-
 afterAll(async () => {
-  await prisma.$disconnect;
+  await prisma.$executeRaw`TRUNCATE TABLE Tests`;
+  prisma.$disconnect;
+});
+
+describe("POST /test", () => {
+  it("Create new test", async () => {
+    const body = await registerFactory();
+    await supertest(server).post(`/signup`).send(body);
+
+    const login = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
+
+    const token = await login.body.token;
+    const test = await testFactory.createTestFactory();
+    const result = await supertest(server)
+      .post(`/test`)
+      .set("Authorization", "Bearer " + token)
+      .send(test);
+
+    expect(result.status).toBe(201);
+  });
 });

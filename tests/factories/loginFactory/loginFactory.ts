@@ -1,17 +1,9 @@
-export async function loginFactory() {
-  const body = {
-    email: "matt@gmail.com",
-    password: "123456",
-  };
-  return body;
-}
+import { faker } from "@faker-js/faker";
 
-export async function errorLoginFactory() {
-  const body = {
-    email: "linc@gmail.com",
-    password: "123456",
-  };
-  return body;
+export async function loginFactory() {
+  const email = faker.internet.email();
+  const password = faker.lorem.word(6);
+  return { email, password };
 }
 
 export async function errorPasswordFactory() {
