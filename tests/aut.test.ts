@@ -10,17 +10,20 @@ import registerFactory, {
   notEmail,
   smallPassword,
 } from "./factories/registerFactory/registerFactory";
+import testFactory from "./factories/testFactory/testFactory";
 
 beforeEach(async () => {
   await prisma.$executeRaw`TRUNCATE TABLE users`;
+  await prisma.$executeRaw`TRUNCATE TABLE Tests`;
 });
 
 afterAll(async () => {
   await prisma.$executeRaw`TRUNCATE TABLE users`;
-  prisma.$disconnect;
+  await prisma.$executeRaw`TRUNCATE TABLE Tests`;
+  prisma.$disconnect();
 });
 
-describe("user test", () => {
+describe("POST /signup", () => {
   it("user register", async () => {
     const body = await registerFactory();
     const result = await supertest(server).post(`/signup`).send(body);
@@ -59,7 +62,7 @@ describe("user test", () => {
   });
 });
 
-describe("user test", () => {
+describe("POST /signin", () => {
   it("Try user login", async () => {
     const body = await registerFactory();
     await supertest(server).post(`/signup`).send(body);
@@ -93,5 +96,77 @@ describe("user test", () => {
     const result = await supertest(server).post(`/signin`).send(body);
 
     expect(result.status).toBe(422);
+  });
+});
+
+describe("POST /test", () => {
+  it("Create new test", async () => {
+    const body = await registerFactory();
+    const register = await supertest(server).post(`/signup`).send(body);
+
+    const login = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
+
+    const token = await login.body.token;
+    const test = await testFactory.createTestFactory();
+    const result = await supertest(server)
+      .post(`/test`)
+      .set("Authorization", "Bearer " + token)
+      .send(test);
+
+    expect(register.status).toBe(201);
+  });
+});
+
+describe("GET /test/disciplines", () => {
+  it("Get all tests by discipline", async () => {
+    const body = await registerFactory();
+    await supertest(server).post(`/signup`).send(body);
+
+    const login = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
+
+    const token = await login.body.token;
+    const test = await testFactory.createTestFactory();
+    await supertest(server)
+      .post(`/test`)
+      .set("Authorization", "Bearer " + token)
+      .send(test);
+
+    const result = await supertest(server)
+      .get(`/test/disciplines`)
+      .set("Authorization", "Bearer " + token)
+      .send();
+
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Array);
+  });
+});
+
+describe("GET /test/teachers", () => {
+  it("Get all tests by teachers", async () => {
+    const body = await registerFactory();
+    await supertest(server).post(`/signup`).send(body);
+
+    const login = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
+
+    const token = await login.body.token;
+    const test = await testFactory.createTestFactory();
+    await supertest(server)
+      .post(`/test`)
+      .set("Authorization", "Bearer " + token)
+      .send(test);
+
+    const result = await supertest(server)
+      .get(`/test/teachers`)
+      .set("Authorization", "Bearer " + token)
+      .send();
+
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Array);
   });
 });
