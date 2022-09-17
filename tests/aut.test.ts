@@ -65,6 +65,7 @@ describe("POST /signup", () => {
 });
 
 describe("POST /signin", () => {
+  console.log(process.env.DATABASE_URL);
   it("Try user login", async () => {
     const body = await registerFactory();
     await supertest(server).post(`/signup`).send(body);
