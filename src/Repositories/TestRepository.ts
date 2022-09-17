@@ -70,8 +70,9 @@ export async function getAllTestsByTeachers() {
     include: {
       TeachersDisciplines: {
         select: {
+          discipline: true,
           Tests: {
-            distinct: ["categoryId"],
+            distinct: ["categoryId", "name"],
             select: {
               category: {
                 select: {
@@ -96,5 +97,6 @@ export async function getAllTestsByTeachers() {
       },
     },
   });
+  return tests;
   return tests;
 }
