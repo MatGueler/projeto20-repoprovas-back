@@ -18,6 +18,7 @@ export async function validatingToken(
     if (!token) throw unauthorizedError("Missing token");
   }
   try {
+    const tokenSession = await userService.findSessionByToken(token);
     const JWT_SECRET = String(process.env.JWT_SECRET);
     const { userId } = jwt.verify(token, JWT_SECRET) as { userId: number };
     const user = await userService.findUserById(userId);
