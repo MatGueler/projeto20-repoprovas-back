@@ -26,19 +26,74 @@ export async function CreateTest(test: ICreateTest) {
   await prisma.tests.create({ data: test });
 }
 
-// export async function getCardById(id: number) {
-//   const card = await prisma.cards.findFirst({
-//     where: { id },
-//     include: {
-//       user: {
-//         select: {
-//           name: true,
-//         },
-//       },
-//     },
-//   });
-//   return card;
-// }
+export async function getAllTestsByDisciplines() {
+  const tests = await prisma.terms.findMany({
+    include: {
+      Disciplines: {
+        orderBy: { termId: "asc" },
+        include: {
+          TeachersDisciplines: {
+            select: {
+              Tests: {
+                distinct: ["categoryId"],
+                select: {
+                  category: {
+                    select: {
+                      id: true,
+                      name: true,
+                      Tests: {
+                        select: {
+                          name: true,
+                          pdfUrl: true,
+                          teacherDiscipline: {
+                            select: {
+                              teacher: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return tests;
+}
+
+export async function getAllTestsByTeachers() {
+  const tests = await prisma.teachers.findMany({
+    include: {
+      TeachersDisciplines: {
+        select: {
+          discipline: true,
+          Tests: {
+            distinct: ["categoryId"],
+            select: {
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                  Tests: {
+                    select: {
+                      name: true,
+                      pdfUrl: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return tests;
+}
 
 // export async function getAllCards(userId: number) {
 //   const cards = await prisma.cards.findMany({
