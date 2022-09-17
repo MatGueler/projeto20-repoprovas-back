@@ -26,14 +26,8 @@ export async function registerUser(infos: IDataUser) {
 export async function loginUser(infos: ILoginUser) {
   const user = await verifyUserExist(infos.email);
   await verifyPassword(infos.password, user);
-  const JWT_SECRET = String(process.env.JWT_SECRET);
-  const token = jwt.sign(
-    {
-      userId: Number(user.id),
-    },
-    JWT_SECRET,
-    { expiresIn: process.env.TIME_JWT }
-  );
+  const token = await createToken(user.id);
+  await repository.InsertSession(user.id, token);
   return token;
 }
 
@@ -62,6 +56,26 @@ async function findUserById(id: number) {
   return user;
 }
 
+async function findSessionByToken(token: string) {
+  const session = await repository.findSession(token);
+  if (!session) throw notFoundError("Session not found");
+
+  return session;
+}
+
+async function createToken(id: number) {
+  const JWT_SECRET = String(process.env.JWT_SECRET);
+  const token = jwt.sign(
+    {
+      userId: Number(id),
+    },
+    JWT_SECRET,
+    { expiresIn: process.env.TIME_JWT }
+  );
+
+  return token;
+}
+
 // verify passwords
 export async function encryptPassword(password: string) {
   const SALT = 10;
@@ -82,6 +96,11 @@ async function verifyPassword(password: string, user: IUser) {
   }
 }
 
-const userService = { findUserById, loginUser, encryptPassword };
+const userService = {
+  findUserById,
+  loginUser,
+  encryptPassword,
+  findSessionByToken,
+};
 
 export default userService;

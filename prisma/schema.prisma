@@ -11,9 +11,10 @@ datasource db {
 }
 
 model Users {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   password String
+  Sessions Sessions?
 
   @@map("users")
 }
@@ -32,6 +33,15 @@ model Teachers {
   TeachersDisciplines TeachersDisciplines[]
 
   @@map("teachers")
+}
+
+model Sessions {
+  id     Int    @id @default(autoincrement())
+  user   Users  @relation(fields: [userId], references: [id])
+  userId Int    @unique
+  token  String @unique
+
+  @@map("sessions")
 }
 
 model Terms {
@@ -65,8 +75,8 @@ model TeachersDisciplines {
 
 model Tests {
   id                  Int                 @id @default(autoincrement())
-  name                String              
-  pdfUrl              String              
+  name                String
+  pdfUrl              String
   category            Categories          @relation(fields: [categoryId], references: [id])
   categoryId          Int
   teacherDiscipline   TeachersDisciplines @relation(fields: [teacherDisciplineId], references: [id])

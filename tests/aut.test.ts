@@ -13,13 +13,15 @@ import registerFactory, {
 import testFactory from "./factories/testFactory/testFactory";
 
 beforeEach(async () => {
-  await prisma.$executeRaw`TRUNCATE TABLE users`;
+  await prisma.$executeRaw`TRUNCATE TABLE sessions`;
+  await prisma.$executeRaw`DELETE FROM users`;
   await prisma.$executeRaw`TRUNCATE TABLE Tests`;
 });
 
 afterAll(async () => {
-  await prisma.$executeRaw`TRUNCATE TABLE users`;
+  await prisma.$executeRaw`TRUNCATE TABLE sessions`;
   await prisma.$executeRaw`TRUNCATE TABLE Tests`;
+  await prisma.$executeRaw`DELETE FROM users`;
   prisma.$disconnect();
 });
 
