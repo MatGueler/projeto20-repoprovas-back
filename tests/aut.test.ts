@@ -114,6 +114,38 @@ describe("POST /test", () => {
     const result = await supertest(server)
       .post(`/test`)
       .set("Authorization", "Bearer " + token)
+      .send({ ...test, category: "ss" });
+
+    expect(result.status).toBe(422);
+  });
+
+  it("Create new test", async () => {
+    const body = await registerFactory();
+    const register = await supertest(server).post(`/signup`).send(body);
+
+    const login = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
+
+    const test = await testFactory.createTestFactory();
+    const result = await supertest(server).post(`/test`).send(test);
+
+    expect(result.status).toBe(401);
+  });
+
+  it("Create new test", async () => {
+    const body = await registerFactory();
+    const register = await supertest(server).post(`/signup`).send(body);
+
+    const login = await supertest(server)
+      .post(`/signin`)
+      .send({ email: body.email, password: body.password });
+
+    const token = await login.body.token;
+    const test = await testFactory.createTestFactory();
+    const result = await supertest(server)
+      .post(`/test`)
+      .set("Authorization", "Bearer " + token)
       .send(test);
 
     expect(result.status).toBe(201);
