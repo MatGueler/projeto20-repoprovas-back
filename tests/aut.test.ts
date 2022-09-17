@@ -70,6 +70,7 @@ describe("POST /signin", () => {
       .post(`/signin`)
       .send({ email: body.email, password: body.password });
     expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
   });
 
   it("Try login with non-existent user", async () => {
@@ -115,7 +116,7 @@ describe("POST /test", () => {
       .set("Authorization", "Bearer " + token)
       .send(test);
 
-    expect(register.status).toBe(201);
+    expect(result.status).toBe(201);
   });
 });
 
