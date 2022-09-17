@@ -70,7 +70,6 @@ export async function getAllTestsByTeachers() {
     include: {
       TeachersDisciplines: {
         select: {
-          discipline: true,
           Tests: {
             distinct: ["categoryId"],
             select: {
@@ -82,6 +81,11 @@ export async function getAllTestsByTeachers() {
                     select: {
                       name: true,
                       pdfUrl: true,
+                      teacherDiscipline: {
+                        select: {
+                          discipline: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -94,21 +98,3 @@ export async function getAllTestsByTeachers() {
   });
   return tests;
 }
-
-// export async function getAllCards(userId: number) {
-//   const cards = await prisma.cards.findMany({
-//     where: { userId },
-//     include: {
-//       user: {
-//         select: {
-//           name: true,
-//         },
-//       },
-//     },
-//   });
-//   return cards;
-// }
-
-// export async function deleteCardById(id: number) {
-//   await prisma.cards.delete({ where: { id } });
-// }
