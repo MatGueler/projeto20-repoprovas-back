@@ -20,8 +20,7 @@ export async function validatingToken(
   try {
     const JWT_SECRET = String(process.env.JWT_SECRET);
     const { userId } = jwt.verify(token, JWT_SECRET) as { userId: number };
-    // const user = await userService.findUserById(userId); retirei pq o teste falhava
-    const user = { id: userId };
+    const user = await userService.findUserById(userId);
     res.locals.user = user;
     next();
   } catch {
